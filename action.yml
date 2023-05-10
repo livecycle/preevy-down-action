@@ -1,0 +1,33 @@
+name: "Preevy Up"
+description: "Runs the Preevy `down` command"
+author: "Livecycle"
+branding:
+  icon: box
+  color: blue
+inputs:
+  profile-url:
+    required: true
+    description: "The Preevy profile URL"
+  args:
+    required: false
+    description: "Additional args to provide to the `down` command."
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+    - name: Install the Preevy CLI
+      shell: bash
+      run: npm i -g preevy
+    - name: Initialize Preevy
+      shell: bash
+      run: preevy init --from ${{ inputs.profile-url }}
+    - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
+      shell: bash
+    - name: Run Preevy
+      shell: bash
+      id: run_preevy
+      run: |
+        # Run the down command
+        preevy down ${{ inputs.args }}
