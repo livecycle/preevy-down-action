@@ -38,7 +38,7 @@ permissions:
   id-token: write
   contents: read
 jobs:
-  deploy:
+  teardown:
     runs-on: ubuntu-latest
     steps:
       - uses: aws-actions/configure-aws-credentials@v2
