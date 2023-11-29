@@ -11,23 +11,37 @@ inputs:
   args:
     required: false
     description: "Additional args to provide to the `down` command."
+  docker-compose-yaml-paths:
+    required: false
+    description: "Array of comma separated paths to docker compose files. Uses current working directory if not provided."
+  version:
+    required: false
+    description: "Version of Preevy to use. Defaults to latest."
+    default: latest
+outputs: {}
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
       with:
         node-version: 18
+        cache: npm
+
     - name: Install the Preevy CLI
       shell: bash
-      run: npm i -g preevy
+      run: npm i -g preevy@${{ inputs.version }}
+
     - name: Initialize Preevy
       shell: bash
       run: preevy init --from ${{ inputs.profile-url }}
-    - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
+
+    - name: Run Preevy down
       shell: bash
-    - name: Run Preevy
-      shell: bash
-      id: run_preevy
+      id: run_preevy_down
       run: |
-        # Run the down command
-        preevy down ${{ inputs.args }}
+        file_opt=""
+        if [[ ! -z "${{ inputs.docker-compose-yaml-paths }}" ]]; then
+          file_opt="-f ${{ inputs.docker-compose-yaml-paths }}"
+        fi
+
+        preevy down ${file_opt} ${{ inputs.args }}
