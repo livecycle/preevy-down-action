@@ -19,6 +19,12 @@ Use this action to stop and delete a preview environment using the Preevy CLI. M
 
 The profile url created by the CLI, [as detailed in the docs](https://preevy.dev/ci/overview#how-to-run-preevy-from-the-ci).
 
+### `docker-compose-yaml-paths`
+
+*required*: `false`
+
+Optional path to the `docker-compose.yaml` file. If not provided, uses the working directory. If you have multiple docker compose files, you can add them as a comma seperated string like so `'docker-compose.yml,docker-compose.dev.yml'`
+
 ### `version`
 
 *required*: `false`
@@ -56,5 +62,6 @@ jobs:
         id: preevy
         with:
           profile-url: "s3://preevy-12345678-my-profile?region=eu-west-1"
-          args: "-f ./docker/docker-compose.yaml"
+          docker-compose-yaml-paths: "./docker/docker-compose.yaml"
 ```
+
