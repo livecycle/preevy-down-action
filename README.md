@@ -19,7 +19,13 @@ Use this action to stop and delete a preview environment using the Preevy CLI. M
 
 The profile url created by the CLI, [as detailed in the docs](https://preevy.dev/ci/overview#how-to-run-preevy-from-the-ci).
 
-### `args` 
+### `version`
+
+*required*: `false`
+
+The preevy [CLI version](https://www.npmjs.com/package/preevy?activeTab=versions) to use. Defaults to `latest`.
+
+### `args`
 
 *required*: `false`
 
@@ -46,7 +52,7 @@ jobs:
           role-to-assume: arn:aws:iam::12345678:role/my-role
           aws-region: eu-west-1
       - uses: actions/checkout@v3
-      - uses: livecycle/preevy-down-action@latest
+      - uses: livecycle/preevy-down-action@v1.1.0
         id: preevy
         with:
           profile-url: "s3://preevy-12345678-my-profile?region=eu-west-1"
