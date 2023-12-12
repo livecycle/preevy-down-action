@@ -18,6 +18,10 @@ inputs:
     required: false
     description: "Version of Preevy to use. Defaults to latest."
     default: latest
+  node-cache:
+    required: false
+    description: "Specify Node package manager for caching. Supported values: npm, yarn, pnpm, or ''. See https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#caching-packages-data"
+    default: npm
 outputs: {}
 runs:
   using: "composite"
@@ -25,15 +29,7 @@ runs:
     - uses: actions/setup-node@v4
       with:
         node-version: 18
-        cache: npm
-
-    - name: Install the Preevy CLI
-      shell: bash
-      run: npm i -g preevy@${{ inputs.version }}
-
-    - name: Initialize Preevy
-      shell: bash
-      run: preevy init --from ${{ inputs.profile-url }}
+        cache: ${{ inputs.node-cache }}
 
     - name: Run Preevy down
       shell: bash
@@ -44,4 +40,4 @@ runs:
           file_opt="-f ${{ inputs.docker-compose-yaml-paths }}"
         fi
 
-        preevy down ${file_opt} ${{ inputs.args }}
+        npx -- preevy down --profile '${{ inputs.profile-url }}' ${file_opt} ${{ inputs.args }}
