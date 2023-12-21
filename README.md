@@ -15,25 +15,28 @@ Preevy's [GitHub plugin](https://preevy.dev/github-plugin) will automatically up
 
 See the [preevy-up action](https://github.com/marketplace/actions/preevy-up) for more information and examples.
 
+## Permissions
+
+Preevy requires the following [GitHub Actions permissions](https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs):
+
+* `contents: read`: used by Preevy to read the Docker Compose file(s)
+* `pull-requests: write`: used by the Preevy GitHub plugin to write or update a comment on the PR
+
+In addition, if you're using GitHub's OIDC Token endpoint to authenticate to your cloud provider (as in the below examples), `id-token: write`: is also needed.
+
 ## Inputs
 
 ### `profile-url`
 
 *required*: `true`
 
-The profile url created by the CLI, [as detailed in the docs](https://preevy.dev/ci).
-
-### `docker-compose-yaml-paths`
-
-*required*: `false`
-
-Optional path to the `docker-compose.yaml` file. If not provided, uses the working directory. If you have multiple docker compose files, you can add them as a comma seperated string like so `'docker-compose.yml,docker-compose.dev.yml'`
+The profile url created by the CLI, [as detailed in the docs](https://preevy.dev/ci/).
 
 ### `args`
 
 *required*: `false`
 
-Optional additional args to the `preevy down` command, see the full reference [here](https://preevy.dev/cli-reference/#preevy-down).
+Optional additional args to the `preevy down` command. [Full reference](https://preevy.dev/cli-reference/down).
 
 ### `version`
 
@@ -41,14 +44,27 @@ Optional additional args to the `preevy down` command, see the full reference [h
 
 The preevy [CLI version](https://www.npmjs.com/package/preevy?activeTab=versions) to use. Defaults to `latest`.
 
-***Note*** Version `v1.2.0` of this action supports Preevy CLI versions `0.0.58` and up. To use an older version of the CLI, use `livecycle/preevy-down-action@v1.1.0`.
+***Note*** Since `v1.3.0`, this action requires Preevy CLI version `v0.0.58` or newer. To use an older version of the CLI, use `livecycle/preevy-down-action@v1.2.0`.
+
+### `docker-compose-yaml-paths`
+
+*required*: `false`
+
+Optional path to the `docker-compose.yaml` file. If not provided, uses the working directory. If you have multiple docker compose files, you can add them as a comma seperated string like so `'docker-compose.yml,docker-compose.dev.yml'`
+
+### `install`
+
+*required*: `false`
+
+***EXPERIMENTAL***. Installation method for the Preevy CLI. Specify `gh-release` to install Preevy from a binary file, which is much faster than using NPM. Specify `none` to skip the installation steps. The default is `npm` which will install from NPM.
+
+If `gh-release` is specified, `version` can be either `latest` or one of the [released versions](https://github.com/livecycle/preevy/releases). Canary versions are not supported.
 
 ### `node-cache`
 
 *required*: `false`
 
-Node package manager used for caching. Supported values: npm, yarn, pnpm, or ''. [Details](https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#caching-packages-data). Default: npm.
-
+Node package manager used for caching. Supported values: `npm`, `yarn`, `pnpm`, or ''. [Details](https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#caching-packages-data). Default: `npm`.
 
 ## Example usage
 
@@ -74,11 +90,10 @@ jobs:
           aws-region: eu-west-1
 
       - uses: actions/checkout@v3
-      - uses: livecycle/preevy-down-action@v1.2.0
+      - uses: livecycle/preevy-down-action@v1.3.0
         id: preevy
         with:
-          # Create the profile using the `preevy init` command, see
-          # https://preevy.dev/ci/overview
+          # Create the profile using the `preevy init` command, see https://preevy.dev/ci
           profile-url: "s3://preevy-12345678-my-profile?region=eu-west-1"
           docker-compose-yaml-paths: "./docker/docker-compose.yaml"
 ```
